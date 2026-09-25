@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: intraday-momentum-scanner
+    env: python
+    plan: starter
+    rootDir: .
+    disk:
+      name: scanner-data
+      mountPath: /var/data
+      sizeGB: 1
+    buildCommand: python3 -m pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --worker-class gthread --threads 8 --timeout 120
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: KITE_API_KEY
+        sync: false
+      - key: KITE_ACCESS_TOKEN
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: ACCESS_COOKIE_SECURE
+        value: "true"
+      - key: AUTH_DB_PATH
+        value: "/var/data/access.sqlite3"
+      - key: FAST_MODE
+        value: "false"
+      - key: SCAN_COMPUTE_EVERY_SEC
+        value: "8"
+      - key: SEED_DAYS_5M
+        value: "7"
+      - key: SEED_DAYS_DAILY
+        value: "120"

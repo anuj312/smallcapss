@@ -1,0 +1,95 @@
+SECTOR_DEFINITIONS = {
+    "MINING": [
+        "GRAVITA", "NSLNISP", "USHAMART", "GPIL", "SARDAEN", "HINDCOPPER",
+        "SHYAMMETL", "GALLANTT", "HEG", "GRAPHITE", "RHIM", "JINDALSAW", "WELCORP",
+    ],
+
+    "PET": [
+        "IGL", "MGL", "GSPL", "MRPL", "CHENNPETRO", "SUPPETRO", "CASTROLIND", "SWANENERGY",
+    ],
+
+    "POWER": [
+        "CESC", "RPOWER", "JPPOWER", "IEX", "INOXWIND", "NAVA", "BELRISE",
+        "ACUTAAS",
+        "TRAVELFOOD",
+        "SAILIFE",
+        "JSWCEMENT",
+        "JAINREC",
+        "CPPLUS",
+    ],
+
+    "CAP": [
+        "ACE", "ENGINERSIN", "IRCON", "RITES", "NBCC", "BEML", "GRSE", "KEC",
+        "ELECON", "TRITURBINE", "TECHNOE", "SCHNEIDER", "JYOTICNC", "TITAGARH",
+        "JUPITER", "RKFORGE", "TIMKEN", "ELGIEQUIP", "KAYNES", "SYRMA", "PGEL",
+        "TRIL", "DATAPATTNS", "ZENTEC", "PTCIL", "RRKABEL", "KIRLOSENG", "HBLPOWER",
+    ],
+
+    "INFRA": [
+        "IRB", "KPIL", "NCC",  "COHANCE",
+        "URBANCO",
+        "ATHERENERG",
+        "AFCONS",
+        "PINELABS",
+        "CEMPRO",
+        "EMMVEE",
+    ],
+
+    "AUTO": [
+        "OLAELEC", "OLECTRA", "SONACOMS", "MSUMI", "MINDACORP", "JBMA", "FORCEMOT",
+        "GABRIEL", "CEATLTD", "JKTYRE", "ARE&M", "CRAFTSMAN", "ZFCVINDIA",
+    ],
+
+    "FIN": [
+        "SBFC", "CAPRIGLOB", "IIFL", "HOMEFIRST", "APTUS", "AAVAS", "PNBHOUSING",
+        "CANFINHOME", "FIVESTAR", "CREDITACC", "POONAWALLA", "MANAPPURAM",
+        "SAMMAANCAP", "PEL", "JMFINANCIL", "ANANDRATHI", "ANGELONE", "NUVAMA",
+        "CAMS", "KFINTECH", "CDSL", "ABSLAMC", "UTIAMC", "STARHEALTH", "GODIGIT",
+        "BANDHANBNK", "RBLBANK", "KARURVYSYA", "CUB", "IDBI", "CENTRALBK",
+        "UCOBANK", "IOB", "IFCI", "CHOICEIN",
+    ],
+
+    "IT": [
+        "CYIENT", "BSOFT", "NEWGEN", "ZENSARTECH", "SONATSOFTW", "AFFLE",
+        "LATENTVIEW", "NETWEB", "CEINFO", "FSL", "ECLERX", "CARTRADE",
+        "INDIAMART", "TBOTEK", "REDINGTON", "INTELLECT", "BLS", "RAILTEL",
+    ],
+
+    "PHARMA": [
+        "PFIZER", "SYNGENE", "CAPLIPOINT", "PPLPHARMA", "JBCHEPHARM", "NEULANDLAB",
+        "CONCORDBIO", "ERIS", "NATCOPHARM", "WOCKPHARMA", "GLAND", "GRANULES",
+        "EMCURE", "INDEGENE", "BLUEJET", "ASTERDM", "NH", "VIJAYA", "LALPATHLAB",
+        "RAINBOW", "KIMS",
+    ],
+
+    "CHEM": [
+        "TATACHEM", "DEEPAKFERT", "DEEPAKNTR", "PARADEEP", "CHAMBLFERT",
+        "DCMSHRIRAM", "AARTIIND", "NAVINFLUOR", "PCBL", "ANUP", "ATUL",
+        "AKZOINDIA", "BAYERCROP", "CLEAN", "HSCL", "SUMICHEM", "CARBORUNIV", "FACT",
+    ],
+
+    "CEMENT": [
+        "INDIACEM", "NUVOCO", "RAMCOCEM", "KAJARIACER", "ASAHIINDIA",  "IGIL", "MMTC",
+    ],
+
+    "CONSUMER": [
+        "ABDL", "HONASA", "ABFRL", "SAPPHIRE", "DEVYANI", "BATAINDIA", "WHIRLPOOL",
+        "CGCL", "BBTC", "EIDPARRY", "LTFOODS", "GILLETTE", "EMAMILTD", "ZYDUSWELL",
+        "BIKAJI", "CCL", "BALRAMCHIN", "TRIDENT", "DOMS", "WELSPUNLIV", "VTL",
+    ],
+
+    "MEDIA": [
+        "ZEEL", "SUNTV", "SAREGAMA", "PVRINOX", "TTML", "HFCL", "TEJASNET", "ITI",
+    ],
+
+    "REAL": [
+        "ABREL", "ANANTRAJ", "BRIGADE", "SOBHA", "SIGNATURE", "CHALET",
+        "LEMONTREE", "EIHOTEL",
+    ],
+
+    "LOG": [
+        "BLUEDART", "DELHIVERY", "SCI", "GESHIP", "AEGISLOG",  "TTML", "HFCL", "TEJASNET", "ITI",
+    ],
+}
+
+ALL_SYMBOLS = sorted({symbol for symbols in SECTOR_DEFINITIONS.values() for symbol in symbols})
