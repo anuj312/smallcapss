@@ -17,16 +17,6 @@ services:
         sync: false
       - key: KITE_ACCESS_TOKEN
         sync: false
-      - key: GOOGLE_CLIENT_ID
-        sync: false
-      - key: RAZORPAY_KEY_ID
-        sync: false
-      - key: RAZORPAY_KEY_SECRET
-        sync: false
-      - key: ACCESS_COOKIE_SECURE
-        value: "true"
-      - key: AUTH_DB_PATH
-        value: "/var/data/access.sqlite3"
       - key: FAST_MODE
         value: "false"
       - key: SCAN_COMPUTE_EVERY_SEC

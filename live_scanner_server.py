@@ -6,8 +6,7 @@ Recommended Render start command (Gunicorn):
 
 Notes:
 - Kite credentials stay server-side (KITE_API_KEY, KITE_ACCESS_TOKEN).
-- /api/scan is protected by a Google-authenticated, paid session cookie.
-- Razorpay payment signatures are verified on the backend before access is granted.
+- /api/scan exposes calculated scanner rows publicly.
 """
 
 from __future__ import annotations
@@ -16,11 +15,6 @@ import logging
 import math
 import os
 import pickle
-import calendar
-import hashlib
-import hmac
-import secrets
-import sqlite3
 import threading
 import time
 from collections import deque
@@ -30,10 +24,7 @@ from typing import Any, Dict, List, Optional
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-import requests
 from flask import Flask, Response, jsonify, request, send_file
-from google.auth.transport.requests import Request as GoogleRequest
-from google.oauth2 import id_token as google_id_token
 
 try:
     # Optional but strongly recommended (bandwidth saver on free hosting).
@@ -85,17 +76,6 @@ except OSError:
 
 HISTORY_CACHE_PATH = DATA_DIR / "history-cache.pkl"
 
-# Google identity and Razorpay secrets stay server-side. The public key and price
-# are exposed through /api/access/status for the checkout widget.
-GOOGLE_CLIENT_ID = clean_env(os.getenv("GOOGLE_CLIENT_ID", ""))
-RAZORPAY_KEY_ID = clean_env(os.getenv("RAZORPAY_KEY_ID", ""))
-RAZORPAY_KEY_SECRET = clean_env(os.getenv("RAZORPAY_KEY_SECRET", ""))
-SUBSCRIPTION_PRICE_PAISE = int(os.getenv("SUBSCRIPTION_PRICE_PAISE", "499900"))
-SUBSCRIPTION_MONTHS = int(os.getenv("SUBSCRIPTION_MONTHS", "6"))
-ACCESS_COOKIE_NAME = "scanner_access"
-ACCESS_COOKIE_SECURE = os.getenv("ACCESS_COOKIE_SECURE", "false").strip().lower() not in {"0", "false", "no", "off"}
-AUTH_DB_PATH = Path(clean_env(os.getenv("AUTH_DB_PATH", str(DATA_DIR / "access.sqlite3"))))
-
 HISTORY_SLEEP_SEC = float(os.getenv("HISTORY_SLEEP_SEC", "0.35"))
 SEED_DAYS_5M = int(os.getenv("SEED_DAYS_5M", "7"))
 SEED_DAYS_DAILY = int(os.getenv("SEED_DAYS_DAILY", "120"))
@@ -116,10 +96,6 @@ PREMARKET_SEED_TIME = parse_clock(os.getenv("PREMARKET_SEED_TIME", "07:30"), dti
 # API payload sizing (bandwidth control)
 DEFAULT_SCAN_LIMIT = int(os.getenv("DEFAULT_SCAN_LIMIT", "250"))
 MAX_SCAN_LIMIT = int(os.getenv("MAX_SCAN_LIMIT", "2000"))
-
-# Access session TTL (memory safety)
-ACCESS_TTL_SEC = int(os.getenv("ACCESS_TTL_SEC", "43200"))  # 12 hours
-
 
 app = Flask(__name__)
 if Compress is not None:
@@ -168,182 +144,6 @@ SCAN_CACHE_UPDATED_AT = 0.0
 SCAN_COMPUTE_STARTED = False
 SCAN_CACHE_LOCK = threading.RLock()
 SCAN_COMPUTE_START_LOCK = threading.Lock()
-
-# Paid-access storage. SQLite keeps entitlements across normal process restarts
-# when AUTH_DB_PATH points at a persistent disk.
-AUTH_DB_LOCK = threading.RLock()
-
-
-# ----------------------------
-# Access control
-# ----------------------------
-
-def _auth_db() -> sqlite3.Connection:
-    AUTH_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    connection = sqlite3.connect(AUTH_DB_PATH, timeout=20)
-    connection.row_factory = sqlite3.Row
-    connection.execute("PRAGMA busy_timeout = 20000")
-    return connection
-
-
-def _ensure_auth_db() -> None:
-    with AUTH_DB_LOCK, _auth_db() as connection:
-        connection.executescript(
-            """
-            CREATE TABLE IF NOT EXISTS users (
-                google_sub TEXT PRIMARY KEY,
-                email TEXT NOT NULL,
-                name TEXT NOT NULL DEFAULT '',
-                picture TEXT NOT NULL DEFAULT '',
-                paid_until REAL,
-                created_at REAL NOT NULL,
-                updated_at REAL NOT NULL
-            );
-            CREATE TABLE IF NOT EXISTS sessions (
-                token_hash TEXT PRIMARY KEY,
-                google_sub TEXT NOT NULL,
-                expires_at REAL NOT NULL,
-                created_at REAL NOT NULL
-            );
-            CREATE TABLE IF NOT EXISTS payment_orders (
-                order_id TEXT PRIMARY KEY,
-                google_sub TEXT NOT NULL,
-                amount_paise INTEGER NOT NULL,
-                status TEXT NOT NULL,
-                payment_id TEXT,
-                created_at REAL NOT NULL
-            );
-            CREATE INDEX IF NOT EXISTS sessions_expiry_idx ON sessions(expires_at);
-            """
-        )
-
-
-def _hash_access_token(token: str) -> str:
-    return hashlib.sha256(token.encode("utf-8")).hexdigest()
-
-
-def _add_months(timestamp: float, months: int) -> float:
-    current = datetime.fromtimestamp(timestamp, IST)
-    month_index = current.month - 1 + months
-    year = current.year + month_index // 12
-    month = month_index % 12 + 1
-    day = min(current.day, calendar.monthrange(year, month)[1])
-    return datetime(year, month, day, current.hour, current.minute, current.second, tzinfo=IST).timestamp()
-
-
-def _public_user(user: sqlite3.Row) -> dict:
-    paid_until = float(user["paid_until"] or 0.0)
-    return {
-        "email": user["email"],
-        "name": user["name"],
-        "picture": user["picture"],
-        "paid": paid_until > time.time(),
-        "paid_until": datetime.fromtimestamp(paid_until, IST).isoformat() if paid_until else None,
-    }
-
-
-def _create_session(google_sub: str) -> str:
-    now = time.time()
-    token = secrets.token_urlsafe(32)
-    with AUTH_DB_LOCK, _auth_db() as connection:
-        connection.execute("DELETE FROM sessions WHERE expires_at <= ?", (now,))
-        connection.execute(
-            "INSERT INTO sessions(token_hash, google_sub, expires_at, created_at) VALUES (?, ?, ?, ?)",
-            (_hash_access_token(token), google_sub, now + ACCESS_TTL_SEC, now),
-        )
-    return token
-
-
-def _current_user() -> Optional[sqlite3.Row]:
-    _ensure_auth_db()
-    token = request.cookies.get(ACCESS_COOKIE_NAME, "")
-    if not token:
-        return None
-    now = time.time()
-    with AUTH_DB_LOCK, _auth_db() as connection:
-        row = connection.execute(
-            """
-            SELECT users.* FROM sessions
-            JOIN users ON users.google_sub = sessions.google_sub
-            WHERE sessions.token_hash = ? AND sessions.expires_at > ?
-            """,
-            (_hash_access_token(token), now),
-        ).fetchone()
-        connection.execute("DELETE FROM sessions WHERE expires_at <= ?", (now,))
-        return row
-
-
-def _set_access_cookie(response, token: str):
-    response.set_cookie(
-        ACCESS_COOKIE_NAME,
-        token,
-        max_age=ACCESS_TTL_SEC,
-        httponly=True,
-        secure=ACCESS_COOKIE_SECURE,
-        samesite="Lax",
-        path="/",
-    )
-    return response
-
-
-def _clear_access_cookie(response):
-    response.delete_cookie(ACCESS_COOKIE_NAME, path="/")
-    return response
-
-
-def _config_payload() -> dict:
-    return {
-        "google_client_id": GOOGLE_CLIENT_ID,
-        "razorpay_key_id": RAZORPAY_KEY_ID,
-        "price_paise": SUBSCRIPTION_PRICE_PAISE,
-        "price_display": f"₹{SUBSCRIPTION_PRICE_PAISE / 100:,.0f}",
-        "months": SUBSCRIPTION_MONTHS,
-    }
-
-
-def _verify_google_credential(credential: str) -> dict:
-    if not GOOGLE_CLIENT_ID:
-        raise RuntimeError("google_not_configured")
-    if not credential:
-        raise ValueError("missing_credential")
-    claims = google_id_token.verify_oauth2_token(credential, GoogleRequest(), GOOGLE_CLIENT_ID)
-    if claims.get("iss") not in {"accounts.google.com", "https://accounts.google.com"}:
-        raise ValueError("invalid_issuer")
-    if not claims.get("email_verified"):
-        raise ValueError("email_not_verified")
-    if not claims.get("sub") or not claims.get("email"):
-        raise ValueError("invalid_identity")
-    return claims
-
-
-def _upsert_google_user(claims: dict) -> sqlite3.Row:
-    now = time.time()
-    with AUTH_DB_LOCK, _auth_db() as connection:
-        connection.execute(
-            """
-            INSERT INTO users(google_sub, email, name, picture, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?)
-            ON CONFLICT(google_sub) DO UPDATE SET
-                email = excluded.email,
-                name = excluded.name,
-                picture = excluded.picture,
-                updated_at = excluded.updated_at
-            """,
-            (
-                str(claims["sub"]),
-                str(claims["email"]),
-                str(claims.get("name") or ""),
-                str(claims.get("picture") or ""),
-                now,
-                now,
-            ),
-        )
-        return connection.execute("SELECT * FROM users WHERE google_sub = ?", (str(claims["sub"]),)).fetchone()
-
-
-def _payment_required_response():
-    return jsonify({"error": "payment_required", "config": _config_payload()}), 402
-
 
 # ----------------------------
 # Market status helpers
@@ -1313,13 +1113,9 @@ def _build_row(symbol: str, sector: str, timeframe: str) -> Optional[dict]:
 
 INDEX_GROUPS = {
     "NIFTY 50": SECTOR_DEFINITIONS["NIFTY_50"],
-    "BANK NIFTY": SECTOR_DEFINITIONS["BANK"] + SECTOR_DEFINITIONS["PSUBANK"],
     "NIFTY IT": SECTOR_DEFINITIONS["IT"],
     "NIFTY AUTO": SECTOR_DEFINITIONS["AUTO"],
-    "NIFTY METAL": SECTOR_DEFINITIONS["METAL"],
     "NIFTY PHARMA": SECTOR_DEFINITIONS["PHARMA"],
-    "NIFTY ENERGY": SECTOR_DEFINITIONS["ENERGY"],
-    "NIFTY REALTY": SECTOR_DEFINITIONS["REALTY"],
 }
 
 
@@ -1577,149 +1373,6 @@ def index():
     return send_file(BASE_DIR / "intraday-momentum-scanner.html")
 
 
-@app.get("/api/access/status")
-def access_status():
-    ensure_live_started()
-    _ensure_auth_db()
-    user = _current_user()
-    return jsonify({
-        "authenticated": bool(user),
-        "user": _public_user(user) if user else None,
-        "config": _config_payload(),
-    })
-
-
-@app.post("/api/auth/google")
-def google_login():
-    ensure_live_started()
-    _ensure_auth_db()
-    payload = request.get_json(silent=True) or {}
-    try:
-        claims = _verify_google_credential(clean_env(str(payload.get("credential", ""))))
-        user = _upsert_google_user(claims)
-        token = _create_session(str(claims["sub"]))
-    except RuntimeError as error:
-        return jsonify({"ok": False, "error": str(error)}), 503
-    except ValueError as error:
-        return jsonify({"ok": False, "error": str(error)}), 401
-    except Exception:
-        log.exception("Google sign-in verification failed")
-        return jsonify({"ok": False, "error": "google_verification_failed"}), 401
-
-    response = jsonify({"ok": True, "user": _public_user(user), "config": _config_payload()})
-    return _set_access_cookie(response, token)
-
-
-@app.post("/api/access/logout")
-def access_logout():
-    ensure_live_started()
-    _ensure_auth_db()
-    token = request.cookies.get(ACCESS_COOKIE_NAME, "")
-    if token:
-        with AUTH_DB_LOCK, _auth_db() as connection:
-            connection.execute("DELETE FROM sessions WHERE token_hash = ?", (_hash_access_token(token),))
-    return _clear_access_cookie(jsonify({"ok": True}))
-
-
-@app.post("/api/payments/order")
-def payment_order():
-    ensure_live_started()
-    _ensure_auth_db()
-    user = _current_user()
-    if not user:
-        return jsonify({"error": "authentication_required"}), 401
-    if float(user["paid_until"] or 0.0) > time.time():
-        return jsonify({"error": "already_paid", "user": _public_user(user)}), 409
-    if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
-        return jsonify({"error": "razorpay_not_configured"}), 503
-
-    receipt = f"scanner-{secrets.token_hex(10)}"
-    try:
-        result = requests.post(
-            "https://api.razorpay.com/v1/orders",
-            auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET),
-            json={
-                "amount": SUBSCRIPTION_PRICE_PAISE,
-                "currency": "INR",
-                "receipt": receipt,
-                "notes": {"product": "IntradayPulse six-month access"},
-            },
-            timeout=15,
-        )
-        result.raise_for_status()
-        order = result.json()
-        order_id = clean_env(str(order.get("id", "")))
-        if not order_id:
-            raise ValueError("missing_order_id")
-    except Exception:
-        log.exception("Razorpay order creation failed")
-        return jsonify({"error": "order_creation_failed"}), 502
-
-    with AUTH_DB_LOCK, _auth_db() as connection:
-        connection.execute(
-            "INSERT INTO payment_orders(order_id, google_sub, amount_paise, status, created_at) VALUES (?, ?, ?, ?, ?)",
-            (order_id, user["google_sub"], SUBSCRIPTION_PRICE_PAISE, "created", time.time()),
-        )
-    return jsonify({
-        "order_id": order_id,
-        "amount": SUBSCRIPTION_PRICE_PAISE,
-        "currency": "INR",
-        "key_id": RAZORPAY_KEY_ID,
-        "name": "IntradayPulse",
-        "description": f"{SUBSCRIPTION_MONTHS}-month dashboard access",
-    })
-
-
-@app.post("/api/payments/verify")
-def payment_verify():
-    ensure_live_started()
-    _ensure_auth_db()
-    user = _current_user()
-    if not user:
-        return jsonify({"error": "authentication_required"}), 401
-    if not RAZORPAY_KEY_SECRET:
-        return jsonify({"error": "razorpay_not_configured"}), 503
-
-    payload = request.get_json(silent=True) or {}
-    order_id = clean_env(str(payload.get("razorpay_order_id", "")))
-    payment_id = clean_env(str(payload.get("razorpay_payment_id", "")))
-    signature = clean_env(str(payload.get("razorpay_signature", "")))
-    if not order_id or not payment_id or not signature:
-        return jsonify({"error": "invalid_payment_response"}), 400
-
-    expected = hmac.new(
-        RAZORPAY_KEY_SECRET.encode("utf-8"),
-        f"{order_id}|{payment_id}".encode("utf-8"),
-        hashlib.sha256,
-    ).hexdigest()
-    if not hmac.compare_digest(expected, signature):
-        return jsonify({"error": "invalid_payment_signature"}), 400
-
-    now = time.time()
-    with AUTH_DB_LOCK, _auth_db() as connection:
-        order = connection.execute(
-            "SELECT * FROM payment_orders WHERE order_id = ? AND google_sub = ?",
-            (order_id, user["google_sub"]),
-        ).fetchone()
-        if not order or int(order["amount_paise"]) != SUBSCRIPTION_PRICE_PAISE:
-            return jsonify({"error": "unknown_payment_order"}), 400
-        if order["status"] == "paid":
-            updated_user = connection.execute("SELECT * FROM users WHERE google_sub = ?", (user["google_sub"],)).fetchone()
-            return jsonify({"ok": True, "user": _public_user(updated_user)})
-        paid_until = max(float(user["paid_until"] or 0.0), now)
-        paid_until = _add_months(paid_until, SUBSCRIPTION_MONTHS)
-        connection.execute(
-            "UPDATE users SET paid_until = ?, updated_at = ? WHERE google_sub = ?",
-            (paid_until, now, user["google_sub"]),
-        )
-        connection.execute(
-            "UPDATE payment_orders SET status = ?, payment_id = ? WHERE order_id = ?",
-            ("paid", payment_id, order_id),
-        )
-        updated_user = connection.execute("SELECT * FROM users WHERE google_sub = ?", (user["google_sub"],)).fetchone()
-    return jsonify({"ok": True, "user": _public_user(updated_user)})
-
-
 @app.get("/api/health")
 def health():
     ensure_live_started()
@@ -1747,12 +1400,6 @@ def health():
 @app.get("/api/scan")
 def scan():
     ensure_live_started()
-
-    user = _current_user()
-    if not user:
-        return jsonify({"error": "authentication_required"}), 401
-    if float(user["paid_until"] or 0.0) <= time.time():
-        return _payment_required_response()
 
     timeframe = request.args.get("type", "intraday").lower()
     universe = request.args.get("universe", "stocks").lower()

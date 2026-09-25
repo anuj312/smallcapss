@@ -12,10 +12,6 @@ source .venv/bin/activate
 pip install -r requirements-live.txt
 export KITE_API_KEY="your_kite_api_key"
 export KITE_ACCESS_TOKEN="your_daily_access_token"
-export GOOGLE_CLIENT_ID="your_google_web_client_id"
-export RAZORPAY_KEY_ID="your_razorpay_key_id"
-export RAZORPAY_KEY_SECRET="your_razorpay_key_secret"
-export ACCESS_COOKIE_SECURE="false"
 python3 live_scanner_server.py
 ```
 
@@ -34,11 +30,7 @@ Open `http://127.0.0.1:8050/` in a browser. Do not open the HTML file directly i
 - Ranks positive and negative movers together by composite momentum score, keeping one continuous rank sequence so green and red names appear together.
 - Shows the cumulative KiteTicker tick count beside the feed status.
 - Serves `/api/scan` for the page and `/api/health` for feed status.
-- Verifies Google Identity Services ID tokens server-side and stores signed-in users in SQLite.
-- Creates Razorpay orders server-side and verifies the Razorpay HMAC signature before granting access.
-- Grants six-month access for ₹4,999 by default (`SUBSCRIPTION_PRICE_PAISE` and `SUBSCRIPTION_MONTHS` can override it).
-- Stores users, sessions, payment orders, and paid-until entitlements in `AUTH_DB_PATH` (default: `SCANNER_DATA_DIR/access.sqlite3`).
-- Requires an authenticated, currently paid session for `/api/scan`, so live scanner data is not returned to an unpaid page.
+- `/api/scan` is publicly available; Kite credentials remain server-side and are never sent to the browser.
 - Starts market-data initialization in the background under Uvicorn, so the dashboard opens while history is still seeding.
 - Recomputes detailed rows and whole-universe Sector flow in a background cache; `/api/scan` only reads that cache, so browser polling does not rerun indicators or RFactor calculations.
 - Detects the next calendar session, clears prior-session live ticks, and reseeds fresh Kite history automatically without requiring a Render restart; the previous-session cache stays visible while this happens.
@@ -68,11 +60,11 @@ gunicorn app:app --bind 0.0.0.0:8050 --workers 1 --worker-class gthread --thread
 3. Set the Root Directory to the folder containing `app.py` and `requirements.txt`.
 4. Use Build Command: `python3 -m pip install -r requirements.txt`.
 5. Use Start Command: `gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --worker-class gthread --threads 8 --timeout 120`.
-6. Add `KITE_API_KEY`, `KITE_ACCESS_TOKEN`, `GOOGLE_CLIENT_ID`, `RAZORPAY_KEY_ID`, and `RAZORPAY_KEY_SECRET` as secret environment variables.
+6. Add `KITE_API_KEY` and `KITE_ACCESS_TOKEN` as secret environment variables.
 7. Deploy and open the Render URL. The health check is `/api/health`.
 
 `render.yaml` contains the same setup. Use an always-on instance for dependable market-hours streaming; sleeping instances can miss ticks. Kite access tokens usually expire daily, so update `KITE_ACCESS_TOKEN` in Render before the next session.
 
-Set `AUTH_DB_PATH` to a persistent disk path in production. Keep one worker per service, as configured above; SQLite and the KiteTicker are then owned by one process.
+Keep one worker per service, as configured above, because the process owns one KiteTicker connection.
 
 This is research context only. It is not an order-entry system or a trading signal.

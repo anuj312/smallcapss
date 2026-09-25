@@ -498,8 +498,6 @@ tbody tr:hover { background: #fafcfd; }
 
 .leaders-side, .volume-ratio-panel, .flow-panel { position: relative; }
 
-.leaders-side .access-cta { top: 32%; }
-
 .volume-ratio-panel { margin-bottom: 19px; }
 
 .volume-ratio-grid { min-height: 0; padding-bottom: 20px; }
@@ -508,77 +506,7 @@ tbody tr:hover { background: #fafcfd; }
 
 .volume-ratio-panel .leader-table .leader-ratio { font-size: 13px; }
 
-.leaders-side .leader-table tbody, .volume-ratio-panel .leader-table tbody, .flow-panel .flow-list { filter: blur(4px); opacity: .48; pointer-events: none; user-select: none; }
-
-.access-cta { position: absolute; top: 54%; left: 50%; z-index: 4; display: grid; width: min(360px, calc(100% - 40px)); gap: 12px; transform: translate(-50%, -50%); padding: 23px 30px; border: 1px solid rgba(179, 198, 222, .78); border-radius: 20px; background: linear-gradient(145deg, rgba(255, 255, 255, .98), rgba(246, 250, 255, .96) 58%, rgba(238, 253, 247, .94)); box-shadow: 0 30px 70px rgba(16, 37, 67, .2), 0 8px 20px rgba(16, 37, 67, .08), inset 0 1px 0 rgba(255, 255, 255, .95); backdrop-filter: blur(18px); isolation: isolate; text-align: center; }
-
-.access-cta::after { content: ""; position: absolute; inset: 1px; z-index: -1; border-radius: 19px; background: radial-gradient(circle at 12% 0%, rgba(184, 244, 215, .32), transparent 42%), radial-gradient(circle at 100% 100%, rgba(58, 103, 219, .12), transparent 44%); pointer-events: none; }
-
-.access-logout { display: none; }
-
-body.access-granted .access-logout { display: inline-flex; }
-
-body.authenticated .access-logout { display: inline-flex; }
-
-body.access-granted .leaders-side .leader-table tbody, body.access-granted .volume-ratio-panel .leader-table tbody, body.access-granted .flow-panel .flow-list { filter: none; opacity: 1; pointer-events: auto; user-select: auto; }
-
-body.access-granted .access-cta { display: none; }
-
-.access-form { display: grid; gap: 9px; }
-
-.access-kicker { color: #087b69; font-size: 10px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
-
-.access-cta h3 { margin: 0; color: #172746; font-size: 22px; letter-spacing: -.04em; }
-
-.access-copy { margin: 0; color: #5c6d84; font-size: 12px; line-height: 1.5; }
-
-.google-login { display: flex; justify-content: center; min-height: 40px; }
-
-.access-payment[hidden], .access-user[hidden] { display: none; }
-
-.access-payment { display: grid; gap: 8px; }
-
-.access-payment-note { color: #5c6d84; font-size: 11px; line-height: 1.4; }
-
-.access-user { display: grid; gap: 8px; }
-
-.access-user-name { color: #172746; font-size: 12px; font-weight: 800; }
-
-.access-user-email { color: #6d7c91; font-size: 11px; overflow-wrap: anywhere; }
-
-.access-cta .access-logout { display: inline-flex; justify-content: center; width: 100%; }
-
-.access-form input { width: 100%; border: 1px solid #d4dfec; border-radius: 12px; padding: 14px 14px; outline: none; background: rgba(255, 255, 255, .82); color: var(--ink); font-size: 14px; font-weight: 650; letter-spacing: .01em; text-align: center; box-shadow: inset 0 1px 2px rgba(25, 48, 80, .04), 0 5px 14px rgba(25, 48, 80, .05); transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
-
-.access-form input::placeholder { color: #7b8798; font-weight: 550; }
-
-.access-form input:focus { border-color: #4c83d7; box-shadow: 0 0 0 4px rgba(76, 131, 215, .14), 0 8px 18px rgba(25, 48, 80, .08); transform: translateY(-1px); }
-
-.access-submit { border: 0; border-radius: 12px; padding: 13px 12px; background: linear-gradient(135deg, #172746 0%, #0b1427 55%, #263e69 100%); color: white; font-size: 14px; font-weight: 800; letter-spacing: .01em; box-shadow: 0 10px 18px rgba(15, 31, 57, .2), inset 0 1px 0 rgba(255, 255, 255, .14); transition: transform .2s ease, box-shadow .2s ease, filter .2s ease; }
-
-.access-submit:hover { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 15px 25px rgba(15, 31, 57, .25), inset 0 1px 0 rgba(255, 255, 255, .18); }
-
-.access-submit:active { transform: translateY(0); }
-
-.access-error { margin-top: 10px; color: var(--red); font-size: 10px; line-height: 1.4; }
-
-.access-link { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 72px; gap: 5px; margin-top: 0; overflow: hidden; padding: 13px 16px; border: 1px solid rgba(255, 255, 255, .42); border-radius: 14px; background: linear-gradient(120deg, #087b69 0%, #08a981 45%, #147cac 100%); color: white; font-size: 14px; font-weight: 850; letter-spacing: -.01em; line-height: 1.3; text-align: center; text-decoration: none; box-shadow: 0 14px 26px rgba(7, 126, 122, .24), inset 0 1px 0 rgba(255, 255, 255, .34); transition: transform .2s ease, box-shadow .2s ease, filter .2s ease; }
-
-.access-link-lead { display: inline-flex; align-items: center; gap: 8px; color: rgba(255, 255, 255, .9); font-size: 10px; font-weight: 900; letter-spacing: .16em; line-height: 1; text-transform: uppercase; }
-
-.access-link-lead::after { content: ""; width: 24px; height: 2px; border-radius: 99px; background: #b8f4d7; box-shadow: 0 0 10px rgba(184, 244, 215, .8); }
-
-.access-link-title { display: block; font-size: 15px; font-weight: 900; letter-spacing: -.015em; line-height: 1.2; }
-
-.access-link::after { content: ""; position: absolute; top: -80%; left: -35%; width: 24%; height: 260%; transform: rotate(24deg); background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .38), transparent); transition: left .65s ease; pointer-events: none; }
-
-.access-link:hover { transform: translateY(-2px); filter: saturate(1.12) brightness(1.04); box-shadow: 0 18px 32px rgba(7, 126, 122, .3), inset 0 1px 0 rgba(255, 255, 255, .4); }
-
-.access-link:hover::after { left: 118%; }
-
-.access-link:focus-visible { outline: 3px solid rgba(66, 100, 215, .3); outline-offset: 3px; }
-
-
+.leaders-side .leader-table tbody, .volume-ratio-panel .leader-table tbody, .flow-panel .flow-list { filter: none; opacity: 1; pointer-events: auto; user-select: auto; }
 
 @media (max-width: 1120px) {
 
@@ -1097,12 +1025,6 @@ padding: 3px;
 
 
 
-.leaders-side .access-cta {
-
-top: 28%;
-
-}
-
 }
 
   .theme-toggle { display: inline-grid; width: 36px; height: 31px; place-items: center; padding: 0; font-size: 18px; line-height: 1; }
@@ -1151,7 +1073,6 @@ top: 28%;
   body.theme-dark .sector-modal-close { color: #c6d2e4; background: #263650; }
   body.theme-dark .sector-modal-columns { color: #9aa9bf; background: #17243a; }
   body.theme-dark .sector-stock-row { border-color: #263650; }
-  body.theme-dark .access-cta { background: linear-gradient(145deg, rgba(24, 39, 63, .98), rgba(16, 29, 49, .96) 58%, rgba(18, 58, 58, .94)); border-color: #405675; box-shadow: 0 30px 70px rgba(0, 0, 0, .44), 0 8px 20px rgba(0, 0, 0, .24), inset 0 1px 0 rgba(255, 255, 255, .08); }
   body.theme-dark .access-form input { color: #edf3ff; background: #17243a; border-color: #405675; }
   body.theme-dark .access-form input::placeholder { color: #9aa9bf; }
   @media (max-width: 520px) { .sector-modal-columns, .sector-stock-row { grid-template-columns: minmax(0, 1fr) 72px 72px; gap: 8px; padding-right: 12px; padding-left: 12px; } .sector-modal-columns { font-size: 8px; } .sector-stock-row, .sector-modal-ratio, .sector-stock-rfactor { font-size: 11px; } .sector-stock-name { font-size: 13px; } }
@@ -1209,7 +1130,6 @@ top: 28%;
 
 <span class="ticks-chip" id="ticksChip">Ticks --</span>
 
-<button class="action access-logout" id="logoutBtn" type="button">Log out</button>
 
 <button class="action theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode"><span id="themeIcon" aria-hidden="true">☾</span></button>
 
@@ -1327,24 +1247,6 @@ top: 28%;
 
 
 
-<div class="access-cta">
-
-<div class="access-kicker">Members-only market dashboard</div>
-<h3>Sign in to continue</h3>
-<p class="access-copy">Google sign-in, then unlock six months of live scanner access for ₹4,999.</p>
-<div class="google-login" aria-label="Sign in with Google"></div>
-<div class="access-payment" hidden>
-<button class="access-submit" data-action="checkout" type="button">Unlock 6 Months · ₹4,999</button>
-<div class="access-payment-note">Secure checkout powered by Razorpay.</div>
-</div>
-<div class="access-user" hidden>
-<div class="access-user-name"></div>
-<div class="access-user-email"></div>
-</div>
-
-<div class="access-error" hidden></div>
-
-</div>
 
 </section>
 
@@ -1396,24 +1298,6 @@ top: 28%;
 
 </div>
 
-<div class="access-cta">
-
-<div class="access-kicker">Members-only market dashboard</div>
-<h3>Sign in to continue</h3>
-<p class="access-copy">Google sign-in, then unlock six months of live scanner access for ₹4,999.</p>
-<div class="google-login" aria-label="Sign in with Google"></div>
-<div class="access-payment" hidden>
-<button class="access-submit" data-action="checkout" type="button">Unlock 6 Months · ₹4,999</button>
-<div class="access-payment-note">Secure checkout powered by Razorpay.</div>
-</div>
-<div class="access-user" hidden>
-<div class="access-user-name"></div>
-<div class="access-user-email"></div>
-</div>
-
-<div class="access-error" hidden></div>
-
-</div>
 
 </section>
 
@@ -1447,24 +1331,6 @@ top: 28%;
 
 
 
-<div class="access-cta">
-
-<div class="access-kicker">Members-only market dashboard</div>
-<h3>Sign in to continue</h3>
-<p class="access-copy">Google sign-in, then unlock six months of live scanner access for ₹4,999.</p>
-<div class="google-login" aria-label="Sign in with Google"></div>
-<div class="access-payment" hidden>
-<button class="access-submit" data-action="checkout" type="button">Unlock 6 Months · ₹4,999</button>
-<div class="access-payment-note">Secure checkout powered by Razorpay.</div>
-</div>
-<div class="access-user" hidden>
-<div class="access-user-name"></div>
-<div class="access-user-email"></div>
-</div>
-
-<div class="access-error" hidden></div>
-
-</div>
 
 
 
@@ -1510,41 +1376,41 @@ top: 28%;
 
 
 
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 
 const SECTOR_DEFINITIONS = {
 
-METAL: ["ADANIENT", "APLAPOLLO", "BHARATFORG", "COALINDIA", "HINDALCO", "HINDZINC", "JSWSTEEL", "JINDALSTEL", "NMDC", "NATIONALUM", "SAIL", "TATASTEEL", "VEDL"],
+MINING: ["GRAVITA", "NSLNISP", "USHAMART", "GPIL", "SARDAEN", "HINDCOPPER", "SHYAMMETL", "GALLANTT", "HEG", "GRAPHITE", "RHIM", "JINDALSAW", "WELCORP"],
 
-REALTY: ["PHOENIXLTD", "GODREJPROP", "LODHA", "OBEROIRLTY", "DLF", "PRESTIGE", "NBCC", "RVNL"],
+PET: ["IGL", "MGL", "GSPL", "MRPL", "CHENNPETRO", "SUPPETRO", "CASTROLIND", "SWANENERGY"],
 
-ENERGY: ["RELIANCE", "ONGC", "IOC", "BPCL", "OIL", "NTPC", "POWERGRID", "POWERINDIA", "TATAPOWER", "JSWENERGY", "ADANIGREEN", "ADANIENSOL", "NHPC", "IREDA", "SUZLON", "INOXWIND", "WAAREEENER", "PREMIERENE", "PETRONET", "GAIL", "HINDPETRO"],
+POWER: ["CESC", "RPOWER", "JPPOWER", "IEX", "INOXWIND", "NAVA", "BELRISE", "ACUTAAS", "TRAVELFOOD", "SAILIFE", "JSWCEMENT", "JAINREC", "CPPLUS"],
 
-AUTO: ["BOSCHLTD", "TIINDIA", "HEROMOTOCO", "M&M", "EICHERMOT", "BAJAJ-AUTO", "ASHOKLEY", "MARUTI", "TVSMOTOR", "MOTHERSON", "SONACOMS", "UNOMINDA", "TMPV", "HYUNDAI", "AMBER"],
+CAP: ["ACE", "ENGINERSIN", "IRCON", "RITES", "NBCC", "BEML", "GRSE", "KEC", "ELECON", "TRITURBINE", "TECHNOE", "SCHNEIDER", "JYOTICNC", "TITAGARH", "JUPITER", "RKFORGE", "TIMKEN", "ELGIEQUIP", "KAYNES", "SYRMA", "PGEL", "TRIL", "DATAPATTNS", "ZENTEC", "PTCIL", "RRKABEL", "KIRLOSENG", "HBLPOWER"],
 
-IT: ["INFY", "TCS", "HCLTECH", "WIPRO", "TECHM", "LTM", "MPHASIS", "KPITTECH", "COFORGE", "PERSISTENT", "TATAELXSI", "OFSS", "CAMS", "NAUKRI", "KAYNES"],
+INFRA: ["IRB", "KPIL", "NCC", "COHANCE", "URBANCO", "ATHERENERG", "AFCONS", "PINELABS", "CEMPRO", "EMMVEE"],
 
-PHARMA: ["CIPLA", "ALKEM", "BIOCON", "DRREDDY", "MANKIND", "TORNTPHARM", "ZYDUSLIFE", "DIVISLAB", "LUPIN", "LAURUSLABS", "FORTIS", "AUROPHARMA", "GLENMARK", "SUNPHARMA", "MAXHEALTH", "APOLLOHOSP"],
+AUTO: ["OLAELEC", "OLECTRA", "SONACOMS", "MSUMI", "MINDACORP", "JBMA", "FORCEMOT", "GABRIEL", "CEATLTD", "JKTYRE", "ARE&M", "CRAFTSMAN", "ZFCVINDIA"],
 
-FMCG: ["HINDUNILVR", "ITC", "NESTLEIND", "BRITANNIA", "DABUR", "MARICO", "COLPAL", "GODREJCP", "TATACONSUM", "PATANJALI", "UNITDSPR", "RADICO", "VBL", "DMART", "NYKAA", "ETERNAL", "SWIGGY", "TITAN", "TRENT", "VMM", "KALYANKJIL", "JUBLFOOD", "ASIANPAINT"],
+FIN: ["SBFC", "CAPRIGLOB", "IIFL", "HOMEFIRST", "APTUS", "AAVAS", "PNBHOUSING", "CANFINHOME", "FIVESTAR", "CREDITACC", "POONAWALLA", "MANAPPURAM", "SAMMAANCAP", "PEL", "JMFINANCIL", "ANANDRATHI", "ANGELONE", "NUVAMA", "CAMS", "KFINTECH", "CDSL", "ABSLAMC", "UTIAMC", "STARHEALTH", "GODIGIT", "BANDHANBNK", "RBLBANK", "KARURVYSYA", "CUB", "IDBI", "CENTRALBK", "UCOBANK", "IOB", "IFCI", "CHOICEIN"],
 
-CEMENT: ["ULTRACEMCO", "SHREECEM", "AMBUJACEM", "DALBHARAT", "GRASIM", "ASTRAL", "PIDILITIND", "SUPREMEIND"],
+IT: ["CYIENT", "BSOFT", "NEWGEN", "ZENSARTECH", "SONATSOFTW", "AFFLE", "LATENTVIEW", "NETWEB", "CEINFO", "FSL", "ECLERX", "CARTRADE", "INDIAMART", "TBOTEK", "REDINGTON", "INTELLECT", "BLS", "RAILTEL"],
 
-FINSERVICE: ["BAJFINANCE", "BAJAJFINSV", "BAJAJHLDNG", "ICICIPRULI", "ICICIGI", "SBILIFE", "HDFCLIFE", "LICI", "LICHSGFIN", "PNBHOUSING", "MUTHOOTFIN", "MANAPPURAM", "CHOLAFIN", "PFC", "RECLTD", "MOTILALOFS", "HDFCAMC", "360ONE", "KFINTECH", "NUVAMA", "PAYTM", "POLICYBZR", "SBICARD", "JIOFIN", "SHRIRAMFIN", "ANGELONE", "BSE", "CDSL", "MCX", "IRFC"],
+PHARMA: ["PFIZER", "SYNGENE", "CAPLIPOINT", "PPLPHARMA", "JBCHEPHARM", "NEULANDLAB", "CONCORDBIO", "ERIS", "NATCOPHARM", "WOCKPHARMA", "GLAND", "GRANULES", "EMCURE", "INDEGENE", "BLUEJET", "ASTERDM", "NH", "VIJAYA", "LALPATHLAB", "RAINBOW", "KIMS"],
 
-BANK: ["HDFCBANK", "ICICIBANK", "AXISBANK", "KOTAKBANK", "IDFCFIRSTB", "FEDERALBNK", "INDUSINDBK", "AUBANK", "BANDHANBNK", "RBLBANK"],
+CHEM: ["TATACHEM", "DEEPAKFERT", "DEEPAKNTR", "PARADEEP", "CHAMBLFERT", "DCMSHRIRAM", "AARTIIND", "NAVINFLUOR", "PCBL", "ANUP", "ATUL", "AKZOINDIA", "BAYERCROP", "CLEAN", "HSCL", "SUMICHEM", "CARBORUNIV", "FACT"],
 
-PSUBANK: ["SBIN", "PNB", "BANKBARODA", "CANBK", "UNIONBANK", "BANKINDIA", "INDIANB"],
+CEMENT: ["INDIACEM", "NUVOCO", "RAMCOCEM", "KAJARIACER", "ASAHIINDIA", "IGIL", "MMTC"],
 
-DURABLES: ["INDUSTOWER", "HAVELLS", "KEI", "POLYCAB", "CROMPTON", "VOLTAS", "PGEL", "DIXON", "SRF"],
+CONSUMER: ["ABDL", "HONASA", "ABFRL", "SAPPHIRE", "DEVYANI", "BATAINDIA", "WHIRLPOOL", "CGCL", "BBTC", "EIDPARRY", "LTFOODS", "GILLETTE", "EMAMILTD", "ZYDUSWELL", "BIKAJI", "CCL", "BALRAMCHIN", "TRIDENT", "DOMS", "WELSPUNLIV", "VTL"],
 
-LOGISTICS: ["CONCOR", "DELHIVERY", "INDIGO", "INDHOTEL", "IRCTC", "BLUESTARCO", "GMRAIRPORT", "PAGEIND", "UPL", "ADANIPORTS"],
+NIFTY_50: ["ADANIENT", "APOLLOHOSP", "ASIANPAINT", "AXISBANK", "BAJAJ-AUTO", "BAJFINANCE", "BAJAJFINSV", "BEL", "BHARTIARTL", "BPCL", "CIPLA", "COALINDIA", "DRREDDY", "EICHERMOT", "GRASIM", "HCLTECH", "HDFCBANK", "HDFCLIFE", "HINDALCO", "HINDUNILVR", "ICICIBANK", "INFY", "INDIGO", "ITC", "JIOFIN", "JSWSTEEL", "KOTAKBANK", "LT", "M&M", "MARUTI", "MAXHEALTH", "NESTLEIND", "NTPC", "ONGC", "POWERGRID", "RELIANCE", "SBILIFE", "SHRIRAMFIN", "SBIN", "SUNPHARMA", "TCS", "TATACONSUM", "TATASTEEL", "TECHM", "TITAN", "TRENT", "ULTRACEMCO", "WIPRO", "TMPV", "ETERNAL"],
 
-DEFENCE: ["ABB", "BEL", "BDL", "BHEL", "CGPOWER", "CUMMINSIND", "HAL", "LT", "MAZDOCK", "COCHINSHIP", "SIEMENS", "SOLARINDS"],
+MEDIA: ["ZEEL", "SUNTV", "SAREGAMA", "PVRINOX", "TTML", "HFCL", "TEJASNET", "ITI"],
 
-NIFTY_50: ["ADANIENT", "APOLLOHOSP", "ASIANPAINT", "AXISBANK", "BAJAJ-AUTO", "BAJFINANCE", "BAJAJFINSV", "BEL", "BHARTIARTL", "BPCL", "CIPLA", "COALINDIA", "DRREDDY", "EICHERMOT", "GRASIM", "HCLTECH", "HDFCBANK", "HDFCLIFE", "HINDALCO", "HINDUNILVR", "ICICIBANK", "INFY", "INDIGO", "ITC", "JIOFIN", "JSWSTEEL", "KOTAKBANK", "LT", "M&M", "MARUTI", "MAXHEALTH", "NESTLEIND", "NTPC", "ONGC", "POWERGRID", "RELIANCE", "SBILIFE", "SHRIRAMFIN", "SBIN", "SUNPHARMA", "TCS", "TATACONSUM", "TATASTEEL", "TECHM", "TITAN", "TRENT", "ULTRACEMCO", "WIPRO", "TMPV", "ETERNAL"]
+REAL: ["ABREL", "ANANTRAJ", "BRIGADE", "SOBHA", "SIGNATURE", "CHALET", "LEMONTREE", "EIHOTEL"],
+
+LOG: ["BLUEDART", "DELHIVERY", "SCI", "GESHIP", "AEGISLOG", "TTML", "HFCL", "TEJASNET", "ITI"]
 
 };
 
@@ -1554,19 +1420,15 @@ const INDEX_DEFINITIONS = [
 
 ["NIFTY 50", "NIFTY50"],
 
-["BANK NIFTY", "BANKNIFTY"],
 
 ["NIFTY IT", "NIFTYIT"],
 
 ["NIFTY AUTO", "NIFTYAUTO"],
 
-["NIFTY METAL", "NIFTYMETAL"],
 
-["NIFTY PHARMA", "NIFTYPHARMA"],
+["NIFTY PHARMA", "NIFTYPHARMA"]
 
-["NIFTY ENERGY", "NIFTYENERGY"],
 
-["NIFTY REALTY", "NIFTYREALTY"]
 
 ];
 
@@ -1611,14 +1473,6 @@ fastMode: false,
 universeSize: 0,
 
 detailSymbols: 0,
-
-accessGranted: false,
-
-authenticated: false,
-
-user: null,
-
-accessConfig: null
 
 };
 
@@ -1819,82 +1673,6 @@ function initializeTheme() {
 
 
 
-async function accessRequest(path, payload) {
-
-const response = await fetch(path, {
-
-method: "POST",
-
-headers: { "Content-Type": "application/json" },
-
-  body: JSON.stringify(payload || {}),
-
-  cache: "no-store",
-
-  credentials: "same-origin"
-
-});
-
-const body = await response.json().catch(() => ({}));
-
-if (!response.ok) {
-
-const error = new Error(body.error || `HTTP ${response.status}`);
-
-error.code = body.error || `http_${response.status}`;
-
-throw error;
-
-}
-
-return body;
-
-}
-
-
-
-function setAccessState(user) {
-
-state.user = user || null;
-state.authenticated = Boolean(user);
-state.accessGranted = Boolean(user?.paid);
-document.body.classList.toggle("authenticated", state.authenticated);
-document.body.classList.toggle("access-granted", state.accessGranted);
-
-document.querySelectorAll(".google-login").forEach(slot => { slot.hidden = state.authenticated; });
-document.querySelectorAll(".access-payment").forEach(panel => { panel.hidden = !state.authenticated || state.accessGranted; });
-document.querySelectorAll(".access-user").forEach(panel => {
-  panel.hidden = !state.authenticated;
-  const name = panel.querySelector(".access-user-name");
-  const email = panel.querySelector(".access-user-email");
-  if (name) name.textContent = user?.name || "Signed-in Google account";
-  if (email) email.textContent = user?.email || "";
-});
-
-}
-
-
-function showAccessError(message) {
-document.querySelectorAll(".access-error").forEach(errorBox => {
-  errorBox.textContent = message;
-  errorBox.hidden = !message;
-});
-}
-
-
-function accessErrorMessage(error) {
-if (error?.code === "google_not_configured") return "Google sign-in is not configured on the server yet.";
-if (error?.code === "email_not_verified") return "Please use a Google account with a verified email address.";
-if (error?.code === "razorpay_not_configured") return "Payments are not configured on the server yet.";
-if (error?.code === "order_creation_failed") return "Checkout could not be started. Please try again.";
-if (error?.code === "payment_required") return "Complete the six-month payment to unlock the dashboard.";
-return "Sign-in or payment service unavailable. Please try again.";
-}
-
-
-
-// UPDATED: Poll /api/scan ONLY after access granted (prevents 403 spam).
-
 let scanTimer = null;
 
 function startScanPolling() {
@@ -1915,112 +1693,6 @@ clearInterval(scanTimer);
 
 scanTimer = null;
 
-}
-
-
-
-async function initializeAccess() {
-try {
-  const response = await fetch("/api/access/status", { cache: "no-store", credentials: "same-origin" });
-  const body = await response.json();
-  state.accessConfig = body.config || null;
-  setAccessState(body.authenticated ? body.user : null);
-} catch (error) {
-  showAccessError("Unable to load sign-in configuration. Please refresh the page.");
-  return;
-}
-
-document.querySelectorAll("[data-action=checkout]").forEach(button => button.addEventListener("click", startCheckout));
-
-if (state.accessGranted) {
-  startScanPolling();
-  return;
-}
-
-if (!state.accessConfig?.google_client_id) {
-  showAccessError("Google sign-in is not configured on the server yet.");
-  return;
-}
-
-const deadline = Date.now() + 10000;
-while (!window.google?.accounts?.id && Date.now() < deadline) {
-  await new Promise(resolve => setTimeout(resolve, 100));
-}
-
-if (!window.google?.accounts?.id) {
-  showAccessError("Google sign-in could not load. Please refresh the page.");
-  return;
-}
-
-window.google.accounts.id.initialize({
-  client_id: state.accessConfig.google_client_id,
-  callback: handleGoogleCredential,
-});
-document.querySelectorAll(".google-login").forEach(container => {
-  window.google.accounts.id.renderButton(container, { theme: "outline", size: "large", width: 260, text: "continue_with" });
-});
-
-}
-
-
-async function handleGoogleCredential(response) {
-try {
-  const body = await accessRequest("/api/auth/google", { credential: response.credential });
-  showAccessError("");
-  setAccessState(body.user);
-  if (state.accessGranted) {
-    startScanPolling();
-    showToast("Dashboard unlocked");
-  } else {
-    showToast("Signed in. Complete payment to unlock access.");
-  }
-} catch (error) {
-  showAccessError(accessErrorMessage(error));
-}
-}
-
-
-async function startCheckout() {
-if (!state.authenticated) {
-  showAccessError("Sign in with Google before starting checkout.");
-  return;
-}
-if (!window.Razorpay) {
-  showAccessError("Razorpay checkout could not load. Please refresh the page.");
-  return;
-}
-
-const buttons = [...document.querySelectorAll("[data-action=checkout]")];
-buttons.forEach(button => { button.disabled = true; button.textContent = "Opening secure checkout…"; });
-try {
-  const order = await accessRequest("/api/payments/order", {});
-  const checkout = new window.Razorpay({
-    key: order.key_id,
-    amount: order.amount,
-    currency: order.currency,
-    name: order.name,
-    description: order.description,
-    order_id: order.order_id,
-    handler: async payment => {
-      try {
-        const result = await accessRequest("/api/payments/verify", payment);
-        setAccessState(result.user);
-        startScanPolling();
-        showToast("Payment verified. Dashboard unlocked.");
-      } catch (error) {
-        showAccessError(accessErrorMessage(error));
-      }
-    },
-    modal: { ondismiss: () => showToast("Checkout cancelled") },
-    theme: { color: "#087b69" },
-  });
-  checkout.on("payment.failed", () => showAccessError("Payment was not completed. Please try again."));
-  checkout.open();
-} catch (error) {
-  showAccessError(accessErrorMessage(error));
-} finally {
-  buttons.forEach(button => { button.disabled = false; button.textContent = "Unlock 6 Months · ₹4,999"; });
-}
 }
 
 
@@ -2207,7 +1879,7 @@ return directionMatch && volatilityMatch && searchMatch;
 
 function compactSectorName(name) {
 
-const labels = { METAL: "MET", REALTY: "RE", ENERGY: "ENE", AUTO: "AUTO", IT: "IT", PHARMA: "PHA", FMCG: "FMCG", CEMENT: "CEM", FINSERVICE: "FIN", BANK: "BANK", PSUBANK: "PSU", DURABLES: "DUR", LOGISTICS: "LOG", DEFENCE: "DEF", NIFTY_50: "N50" };
+const labels = { MINING: "MIN", PET: "PET", POWER: "PWR", CAP: "CAP", INFRA: "INF", AUTO: "AUTO", FIN: "FIN", IT: "IT", PHARMA: "PHA", CHEM: "CHEM", CEMENT: "CEM", CONSUMER: "CONS", NIFTY_50: "N50", MEDIA: "MED", REAL: "REAL", LOG: "LOG" };
 
 return labels[name] || name.replaceAll("_", " ").slice(0, 5);
 
@@ -2667,19 +2339,7 @@ toast.style.transform = "translate(-50%, 16px)";
 
 
 
-// UPDATED: require accessGranted; handle session expiry (403) cleanly.
-
 async function loadLiveData(manual = false) {
-
-if (!state.accessGranted) {
-
-if (manual) showToast("Login required for live feed");
-
-return;
-
-}
-
-
 
 const params = new URLSearchParams({
 
@@ -2699,35 +2359,11 @@ _: Date.now()
 
 try {
 
-const response = await fetch(`/api/scan?${params.toString()}`, { cache: "no-store", credentials: "same-origin" });
+const response = await fetch(`/api/scan?${params.toString()}`, { cache: "no-store" });
 
 
 
 if (!response.ok) {
-
-if (response.status === 401 || response.status === 402) {
-
-// Session expired or entitlement ended -> return to the access gate.
-
-stopScanPolling();
-
-setAccessState(response.status === 402 ? state.user : null);
-
-state.liveRows = null;
-
-state.live = false;
-
-state.sectorFlow = null;
-
-state.feedStatus = "offline";
-
-render();
-
-showToast(response.status === 402 ? "Payment required to view the scanner" : "Please sign in again");
-
-return;
-
-}
 
 throw new Error(`HTTP ${response.status}`);
 
@@ -2825,7 +2461,7 @@ group.querySelectorAll("button").forEach(item => item.classList.toggle("active",
 
 render();
 
-if (state.accessGranted) loadLiveData();
+loadLiveData();
 
 }));
 
@@ -2839,7 +2475,7 @@ state[select.id] = event.target.value;
 
 render();
 
-if (state.accessGranted) loadLiveData();
+loadLiveData();
 
 })
 
@@ -2871,7 +2507,7 @@ showToast(state.universe === "index" ? "Index universe selected" : "Stock univer
 
 render();
 
-if (state.accessGranted) loadLiveData();
+loadLiveData();
 
 });
 
@@ -2889,45 +2525,7 @@ showToast("Refreshing scanner");
 
 render();
 
-if (state.accessGranted) loadLiveData(true);
-
-});
-
-
-
-document.getElementById("logoutBtn").addEventListener("click", async () => {
-
-if (!state.authenticated) return;
-
-try {
-
-await accessRequest("/api/access/logout", {});
-
-} catch (error) {
-
-showToast("Could not log out; please try again");
-
-return;
-
-}
-
-
-
-stopScanPolling();
-
-setAccessState(null);
-
-state.liveRows = null;
-
-state.live = false;
-
-state.sectorFlow = null;
-
-state.feedStatus = "offline";
-
-render();
-
-showToast("Logged out");
+loadLiveData(true);
 
 });
 
@@ -2991,9 +2589,8 @@ showToast(`${button.textContent.trim()} is a demo view`);
 
 initializeTheme();
 
-render(); // demo render immediately
-
-initializeAccess(); // will start polling only after successful login
+render();
+startScanPolling();
 
 </script>
 
